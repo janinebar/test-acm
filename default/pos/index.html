@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="styles.css" />
+</head>
+
+<body>
+
+<div style="width: 100vw; height: 100vh;">
+    <h1 style="text-align: center;">Point of Sale System v1</h1>
+    <p style="font-size: 10px; color: black; text-align: center; margin-top: -17px;">
+        <i>Created by <a href="https://who/janinebariuan/"
+                         style="color: black; text-decoration: none;">janinebariuan@</a></i></p>
+    <div style="width: 100%; height: 100%; display: table">
+        
+        <!-- Totals -->
+        <div id="checkout" style="width: 30%; height: 100%; display: table-cell">
+            <div>
+                <p id="order-num-p"
+                    style="background-color: white;"><b>Order #1</b></p>
+            </div>
+            <div id="bill-wrapper">
+                <div id="bill-table-wrapper">
+                    <table id="bill-table">
+                        <tr>
+                            <td id="bill-header-td" style="width: 70%;">Item</td>
+                            <td id="bill-header-td" style="width: 30%;">Price</td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="border-top: 1px solid black">
+                    <table id="bill-total-table">
+                        <tr>
+                            <td style="width: 70%;">Total:</td>
+                            <td id="bill-total-td" style="width: 30%;"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <!-- Bill Item selector -->
+            <div>
+                <table>
+                    <tr>
+                        <td>
+                            <button id="bill-item-selector"
+                                    type="button"
+                                    value="up"
+                                    onclick="selectBillItem(this.value)">Up</button>
+                        </td>
+                        <td>
+                            <button id="bill-item-selector"
+                                    type="button"
+                                    value="down"
+                                    onclick="selectBillItem(this.value)">Down</button>
+                        </td>
+                    </tr>
+                </table>
+                <button id="bill-item-selector" 
+                        type="button"
+                        onclick="restartSelection()">Undo Selection</button>
+
+            </div>
+        </div>
+        
+        <div style="width: 50%; display: table-cell">
+            <div style="display: table;">
+                <!-- Products -->
+                <div style=" width: 100%; height: 80%; display: table-row;">
+                    <table>
+                        <tr>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Hamburger"
+                                    onClick="addToBill(this.value)">Hamburger</button>
+                            </td>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Cheeseburger"
+                                    onClick="addToBill(this.value)">Cheeseburger</button>
+                            </td>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Hotdog"
+                                    onClick="addToBill(this.value)">Hotdog</button>
+                            </td>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Fries"
+                                    onClick="addToBill(this.value)">Fries</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Coke"
+                                    onClick="addToBill(this.value)">Coke</button>
+                            </td>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Pepsi"
+                                    onClick="addToBill(this.value)">Pepsi</button>
+                            </td>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Dr. Pepper"
+                                    onClick="addToBill(this.value)">Dr. Pepper</button>
+                            </td>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Juice"
+                                    onClick="addToBill(this.value)">Juice</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Cookie"
+                                    onClick="addToBill(this.value)">Cookie</button>
+                            </td>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Ice Cream"
+                                    onClick="addToBill(this.value)">Ice Cream</button>
+                            </td>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Brownie"
+                                    onClick="addToBill(this.value)">Brownie</button>
+                            </td>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Candy"
+                                    onClick="addToBill(this.value)">Candy</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Ketchup"
+                                    onClick="addToBill(this.value)">Ketchup</button>
+                            </td>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Mustard"
+                                    onClick="addToBill(this.value)">Mustard</button>
+                            </td>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Mayonnaise"
+                                    onClick="addToBill(this.value)">Mayonnaise</button>
+                            </td>
+                            <td id="food-td">
+                                <button id="food-button"
+                                    type="button"
+                                    value="Ranch"
+                                    onClick="addToBill(this.value)">Ranch</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Edit Bill -->
+                <div style="width: 100%; height: 20%; display: table-row;">
+                    <table>
+                        <tr>
+                            <td>
+                                <button id="bill-menu-button"
+                                        style="background-color: rgb(145, 22, 22);"
+                                        onclick="removeBillItem()">Remove Item</button>
+                            </td>
+                            <td>
+                                <button id="bill-menu-button"
+                                        onclick="clearBill()">Clear All Items</button>
+                            </td>
+                            <td>
+                                <button id="bill-menu-button"
+                                        onclick="newOrder()">New Order</button>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu -->
+        <div id="menu" style="width: 20%; height: 100%; display: table-cell">
+            <div>
+                <table style="width: 100%">
+                    <tr>
+                        <td><button id="menu-button">Edit Inventory</button></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="orders.html">
+                            <button id="menu-button">View Previous Orders</button></a>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td><button id="menu-button"
+                                    onclick="toggleReceiptLightbox()">Print Check</button></td>
+                    </tr>
+                    <tr>
+                        <td><button id="pay-button"
+                                    onclick="togglePaymentLightbox()">Pay</button></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Processing payment lightbox -->
+<div id="lightbox-wrapper" style="display: none;">
+    <div id="lightbox" style="display: none;">
+        <table>
+            <tr>
+            <td><div class="loader"></div></td>
+            <td><p id="lightbox-p"></p>
+                <button
+                    onclick="togglePaymentLightbox()">Cancel</button>
+            </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- Functionality -->
+<script src="buttons.js"></script>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script type="text/javascript" src="auth.js"></script>
+<script type="text/javascript" src="firebase.js"></script>
+
+</body>
+</html>
