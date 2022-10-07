@@ -2,7 +2,7 @@ apiVersion: configsync.gke.io/v1alpha1
 kind: RepoSync
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: test-acm-1
+    configmanagement.gke.io/cluster-selector: select-location-central,select-location-west
   name: repo-sync
 spec:
   git:
