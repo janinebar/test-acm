@@ -1,0 +1,12 @@
+apiVersion: configsync.gke.io/v1alpha1
+kind: RepoSync
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-selector: test-acm-2
+  name: repo-sync
+spec:
+  git:
+    auth: none
+    branch: main
+    dir: /
+    repo: https://github.com/janinebar/test-acm
