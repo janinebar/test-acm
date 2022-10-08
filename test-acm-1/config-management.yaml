@@ -6,6 +6,7 @@ spec:
   clusterName: test-acm-1
   enableMultiRepo: true
   sourceFormat: unstructured
+  enableLegacyFields: true
   git:
     syncRepo: https://github.com/janinebar/test-acm/
     syncBranch: main
