@@ -1,3 +1,5 @@
+# only one needed per fleet
+# recommened to use root sync tho
 apiVersion: configmanagement.gke.io/v1
 kind: ConfigManagement
 metadata:
