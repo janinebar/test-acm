@@ -1,10 +1,10 @@
 # For "test-acm-1" cluster, give it the following labels:
 # state=texas, location=central, color=red
-kind: Cluster
-apiVersion: clusterregistry.k8s.io/v1alpha1
-metadata:
-  name: test-acm-1
-  labels:
-    state: texas
-    location: central
-    color: red
+# kind: Cluster
+# apiVersion: clusterregistry.k8s.io/v1alpha1
+# metadata:
+#   name: test-acm-1
+#   labels:
+#     state: texas
+#     location: central
+#     color: red
