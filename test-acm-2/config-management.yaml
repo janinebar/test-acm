@@ -1,0 +1,13 @@
+apiVersion: configmanagement.gke.io/v1
+kind: ConfigManagement
+metadata:
+  name: config-management
+spec:
+  clusterName: test-acm-2
+  enableMultiRepo: true
+  sourceFormat: unstructured
+  enableLegacyFields: true
+  git:
+    syncRepo: https://github.com/janinebar/test-acm/
+    syncBranch: main
+    secretType: none
