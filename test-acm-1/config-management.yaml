@@ -5,3 +5,8 @@ metadata:
 spec:
   clusterName: test-acm-1
   enableMultiRepo: true
+  sourceFormat: unstructured
+  git:
+    syncRepo: https://github.com/janinebar/test-acm/
+    syncBranch: main
+    secretType: none
