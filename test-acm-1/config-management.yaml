@@ -1,7 +1,7 @@
 apiVersion: configmanagement.gke.io/v1
 kind: ConfigManagement
 metadata:
-  name: test-acm-1-config-mgmt
+  name: config-management
 spec:
   clusterName: test-acm-1
   enableMultiRepo: true
