@@ -1,14 +1,14 @@
-# only one needed per fleet
-# recommened to use root sync tho
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
-spec:
-  enableMultiRepo: true
-  sourceFormat: unstructured
-  enableLegacyFields: true
-  git:
-    syncRepo: https://github.com/janinebar/test-acm/
-    syncBranch: main
-    secretType: none
+# # only one needed per fleet
+# # recommened to use root sync tho
+# apiVersion: configmanagement.gke.io/v1
+# kind: ConfigManagement
+# metadata:
+#   name: config-management
+# spec:
+#   enableMultiRepo: true
+#   sourceFormat: unstructured
+#   enableLegacyFields: true
+#   git:
+#     syncRepo: https://github.com/janinebar/test-acm/
+#     syncBranch: main
+#     secretType: none
