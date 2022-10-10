@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-deployment-old
-  annotations:
-    configsync.gke.io/cluster-name-selector: test-acm-1,testing
+  # annotations:
+  #   configsync.gke.io/cluster-name-selector: test-acm-1,testing
 spec:
   selector:
     matchLabels:
