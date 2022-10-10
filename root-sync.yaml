@@ -6,5 +6,5 @@ metadata:
 spec:
   sourceFormat: unstructured
   git:
-   repo: https://github.com/janinebar/test-acm/
-     auth: none
+    repo: https://github.com/janinebar/test-acm/
+    auth: none
