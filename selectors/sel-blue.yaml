@@ -1,5 +1,5 @@
 kind: ClusterSelector
-apiVersion: configmanagement.gke.io/v1
+apiVersion: configsync.gke.io/v1beta1
 metadata:
   name: selector-blue
 spec:
