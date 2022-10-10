@@ -8,6 +8,6 @@
 ...
 metadata:
   annotations:
-    configmanagement.gke.io/cluster-selector: <selector>
+    configsync.gke.io/cluster-name-selector:: <selector>
 ...
 ```
