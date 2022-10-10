@@ -7,5 +7,4 @@ spec:
   sourceFormat: unstructured
   git:
    repo: https://github.com/janinebar/test-acm/
-     branch: main
      auth: none
