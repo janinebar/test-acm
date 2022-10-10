@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: nginx-deployment-old
   annotations:
-    configsync.gke.io/cluster-name-selector: selector-central,selector-east
+    configsync.gke.io/cluster-name-selector: test-acm-1,testing
 spec:
   selector:
     matchLabels:
