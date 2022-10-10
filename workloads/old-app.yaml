@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: nginx-deployment-old
   annotations:
-    configsync.gke.io/cluster-name-selector: selector-central, selector-purple
+    configsync.gke.io/cluster-name-selector: selector-central,selector-east
 spec:
   selector:
     matchLabels:
