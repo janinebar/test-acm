@@ -6,6 +6,7 @@ metadata:
   annotations:
     prometheus.io/scrape: 'true'
     prometheus.io/port: '9113'
+    configmanagement.gke.io/cluster-selector: canary-10-sel,abm-us-east1-sel
 spec:
   replicas: 1
   selector:
