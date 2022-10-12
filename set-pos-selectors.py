@@ -5,6 +5,8 @@ import base64
 import requests
 import ruamel.yaml
 
+app = Flask(__name__)
+
 ######################## 
 ## CREATE NEW FILE TO GIT
 ########################
@@ -41,6 +43,7 @@ def update_selectors():
     # Pull params
     params = request.get_json()
     pos_version = params['pos_version'] 
+    print(pos_version)
     policies = params['policies'] # array of string policies
     labels = params['labels']
 
@@ -56,22 +59,35 @@ def update_selectors():
     pos_v1_sha, pos_v1_content = git_pull_file(pos_v1_url)
 
     # Decode the content and save locally
-    save_gitfile_locally("pos_v2.yaml", pos_v2_content)
-    save_gitfile_locally("pos_v1.yaml", pos_v1_content)
+    # save_gitfile_locally("pos_v2.yaml", pos_v2_content)
+    # save_gitfile_locally("pos_v1.yaml", pos_v1_content)
 
-    # Update the POS yamls
-    set_pos(selectors)
+    # Update the POS yamls based on chosen version
+    nonchosen_selectors = get_nonchosen_pos_selectors(selectors)
+    if(pos_version == "pos_v2"):
+        print("VERSION 2")
+        # Set POS v2 selectors
+        set_pos_selectors("pos_v2.yaml", selectors)
+        # Put all other selectors in POS v1
+        set_pos_selectors("pos_v1.yaml", nonchosen_selectors)
+    elif(pos_version == "pos_v1"):
+        print("VERSION 1")
+        # Set POS v1 selectors
+        set_pos_selectors("pos_v1.yaml", selectors)
+        # Put all other selectors in POS v2
+        set_pos_selectors("pos_v2.yaml", nonchosen_selectors)
 
     # Encode yamls back to base64 
     pos_v2_yaml_encoded = encode_localfile_b64("pos_v2.yaml")
     pos_v1_yaml_encoded = encode_localfile_b64("pos_v1.yaml")
 
     # Push updated POS versions back to git
-    message = f"updated pos_v2 with selectors: {selectors}"
+    message = f"updated {pos_version} with selectors: {selectors}"
     r = git_update_file(pos_v2_url, message, pos_v2_yaml_encoded, pos_v2_sha)
     r = git_update_file(pos_v1_url, message, pos_v1_yaml_encoded, pos_v1_sha)
 
-    return Response(r, status=200)
+    return "OK"
+
 
 ######################## 
 ## FORM GIT URL FOR REQUESTS
@@ -104,11 +120,12 @@ def git_pull_file(url):
     r = requests.get(
         url, 
         headers = {
-            "Authorization": "Bearer <TOKEN>",
+            "Authorization": "Bearer " + token,
             "Content-Type": "application/json"
         },
     )
     response = r.json()
+    print(response['sha'])
     sha = response['sha']
     content = response['content']
     return sha, content
@@ -120,7 +137,7 @@ def git_update_file(url, message, content, sha):
     r = requests.put(
         url, 
         headers = {
-            "Authorization": "Bearer <TOKEN>",
+            "Authorization": "Bearer " + token,
             "Content-Type": "application/json"
         },
         data = json.dumps({
@@ -135,7 +152,7 @@ def git_push_new_file(url, message, content):
     r = requests.put(
         url, 
         headers = {
-            "Authorization": "Bearer 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",
+            "Authorization": "Bearer " + token,
             "Content-Type": "application/json"
         },
         data = json.dumps({
@@ -197,22 +214,11 @@ all_selectors = [   # Asia
                     'continent-south-america-sel',
                     'continent-usa-sel']
 
-def set_pos(selectors):
-
-    print(len(all_selectors))
+def get_nonchosen_pos_selectors(selectors):
     #set the array with other selectors
-    old_pos_selector = (set(all_selectors) - set(selectors))
-    print(len(selectors))
-    print(len(old_pos_selector))
+    return set(all_selectors) - set(selectors)
 
-    # Set POS v2 selectors
-    set_yaml("pos_v2.yaml", selectors)
-
-    # Put all other selectors in POS v2
-    set_yaml("pos_v1.yaml", old_pos_selector)
-
-
-def set_yaml(yaml_str, pos_selector):
+def set_pos_selectors(yaml_str, pos_selector):
     
     # Parse the YAML file
     yaml = ruamel.yaml.YAML()
