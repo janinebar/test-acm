@@ -43,7 +43,6 @@ def update_selectors():
     # Pull params
     params = request.get_json()
     pos_version = params['pos_version'] 
-    pos_version = "pos_v2"
     print(pos_version)
     policies = params['policies'] # array of string policies
     labels = params['labels']
