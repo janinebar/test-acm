@@ -43,6 +43,7 @@ def update_selectors():
     # Pull params
     params = request.get_json()
     pos_version = params['pos_version'] 
+    pos_version = "pos_v2"
     print(pos_version)
     policies = params['policies'] # array of string policies
     labels = params['labels']
@@ -59,23 +60,23 @@ def update_selectors():
     pos_v1_sha, pos_v1_content = git_pull_file(pos_v1_url)
 
     # Decode the content and save locally
-    # save_gitfile_locally("pos_v2.yaml", pos_v2_content)
-    # save_gitfile_locally("pos_v1.yaml", pos_v1_content)
+    save_gitfile_locally("pos_v2.yaml", pos_v2_content)
+    save_gitfile_locally("pos_v1.yaml", pos_v1_content)
 
     # Update the POS yamls based on chosen version
-    nonchosen_selectors = get_nonchosen_pos_selectors(selectors)
+    selected_clusters, unselected_clusters = get_nonchosen_pos_selectors(labels)
     if(pos_version == "pos_v2"):
         print("VERSION 2")
         # Set POS v2 selectors
-        set_pos_selectors("pos_v2.yaml", selectors)
+        set_pos_selectors("pos_v2.yaml", selected_clusters)
         # Put all other selectors in POS v1
-        set_pos_selectors("pos_v1.yaml", nonchosen_selectors)
+        set_pos_selectors("pos_v1.yaml", unselected_clusters)
     elif(pos_version == "pos_v1"):
         print("VERSION 1")
         # Set POS v1 selectors
-        set_pos_selectors("pos_v1.yaml", selectors)
+        set_pos_selectors("pos_v1.yaml", selected_clusters)
         # Put all other selectors in POS v2
-        set_pos_selectors("pos_v2.yaml", nonchosen_selectors)
+        set_pos_selectors("pos_v2.yaml", unselected_clusters)
 
     # Encode yamls back to base64 
     pos_v2_yaml_encoded = encode_localfile_b64("pos_v2.yaml")
@@ -162,62 +163,42 @@ def git_push_new_file(url, message, content):
     )
     return r
 
-# List of all selectors
-all_selectors = [   # Asia
-                    'abm-asia-east1-sel', 
-                    'abm-asia-northeast1-sel', 
-                    'abm-asia-northeast2-sel', 
-                    'abm-asia-northeast3-sel', 
-                    'abm-asia-southeast1-sel', 
-                    'abm-asia-southeast2-sel', 
-                    'abm-asia-south1-sel', 
-                    'abm-asia-south2-sel',
-                    # Australia
-                    'abm-australia-southeast1-sel',
-                    'abm-australia-southeast2-sel',
-                    # Europe 
-                    'abm-europe-central2-sel', 
-                    'abm-europe-north1-sel', 
-                    'abm-europe-southwest1-sel', 
-                    'abm-europe-west1-sel', 
-                    'abm-europe-west2-sel', 
-                    'abm-europe-west3-sel', 
-                    'abm-europe-west4-sel', 
-                    'abm-europe-west6-sel', 
-                    'abm-europe-west8-sel', 
-                    'abm-europe-west9-sel',
-                    # Northamerica
-                    'abm-northamerica-northeast1-sel',
-                    'abm-northamerica-northeast2-sel',
-                    # Southamerica
-                    'abm-souththamerica-east1-sel',
-                    'abm-souththamerica-west1-sel',
-                    # US
-                    'abm-us-central1-sel', 
-                    'abm-us-east1-sel', 
-                    'abm-us-east4-sel', 
-                    'abm-us-south1-sel', 
-                    'abm-us-west1-sel', 
-                    'abm-us-west2-sel', 
-                    'abm-us-west3-sel', 
-                    'abm-us-west4-sel',
-                    # Canary
-                    'canary-50-sel', 
-                    'canary-10-sel', 
-                    'canary-100-sel', 
-                    'canary-25-sel', 
-                    # Continents
-                    'continent-europe-sel', 
-                    'continent-asia-sel', 
-                    'continent-australia-sel', 
-                    'continent-north-america-sel', 
-                    'continent-south-america-sel',
-                    'continent-usa-sel']
 
-def get_nonchosen_pos_selectors(selectors):
-    #set the array with other selectors
-    return set(all_selectors) - set(selectors)
+######################## 
+## FIND SELECTED AND UNSELECTED CLUSTERS
+########################
+def get_nonchosen_pos_selectors(labels):
+    
+    selected_clusters = []
+    unselected_clusters = []
+    
+    # Find the corresponding clusters for the desired labels
+    for label in labels:
+        print(label)
+        label_values = labels[label]
+        for value in label_values:
+            print("------------- "+ label + ": " + value)
 
+            for cluster in clusters: # For each cluster
+                curr_cluster_labels = clusters[cluster] # Look at the cluster labels
+                if(curr_cluster_labels[label] == value):  
+                    print(cluster)
+                    if(cluster not in selected_clusters): # Add the cluster name if it has the desired label:value 
+                        selected_clusters.append(cluster) # Remove duplicates
+    
+    # Find the rest of the clusters that do not have the desired label:values
+    for cluster in clusters:
+        if(cluster not in selected_clusters):
+            unselected_clusters.append(cluster)
+
+    print(len(selected_clusters))
+    print(len(unselected_clusters))
+
+    return selected_clusters, unselected_clusters
+
+######################## 
+## UPDATE POS YAMLS WITH NEW CLUSTERS
+########################
 def set_pos_selectors(yaml_str, pos_selector):
     
     # Parse the YAML file
@@ -225,16 +206,18 @@ def set_pos_selectors(yaml_str, pos_selector):
     data = yaml.load(open(yaml_str))
     
     # Change value of the selectors
-    data['metadata']['annotations']['configmanagement.gke.io/cluster-selector'] =  ",".join(pos_selector)
+    data['metadata']['annotations']['configsync.gke.io/cluster-name-selector'] =  ",".join(pos_selector)
     
     #Write to file
     with open(yaml_str, 'w') as file:
         yaml.dump(data, file)
 
-def find_selector(selectorList):
-    
-    selects = []
 
+######################## 
+## FORM SELECTOR NAME
+########################
+def find_selector(selectorList):
+    selects = []
     # Iterate through the label:value dict
     for key in selectorList:
         print(selectorList)
@@ -263,12 +246,48 @@ def find_selector(selectorList):
     print(selects)
     return selects
 
+######################## 
+## ALL CLUSTERS WITH LABELS
+########################
+clusters = {
+    'abm-asia-east1': {"canary": "100", "loc": "asia-east1", "continent": "asia"},
+    'abm-asia-east2': {"canary": "50", "loc": "asia-east2", "continent": "asia"},
+    'abm-asia-northeast1': {"canary": "10", "loc": "asia-northeast1", "continent": "asia"},
+    'abm-asia-northeast2': {"canary": "50", "loc": "asia-northeast2", "continent": "asia"},
+    'abm-asia-northeast3': {"canary": "25", "loc": "asia-northeast3", "continent": "asia"},
+    'abm-asia-south1': {"canary": "100", "loc": "asia-south", "continent": "asia"},
+    'abm-asia-south2': {"canary": "10", "loc": "asia-south1", "continent": "asia"},
+    'abm-asia-southeast1': {"canary": "100", "loc": "asia-southeast1", "continent": "asia"},
+    'abm-asia-southeast2': {"canary": "100", "loc": "asia-southeast1", "continent": "asia"},
+    'abm-australia-southeast1': {"canary": "50", "loc": "australia-southeast1", "continent": "australia"},
+    'abm-australia-southeast2': {"canary": "100", "loc": "australia-southeast2", "continent": "australia"},
+    'abm-europe-central2': {"canary": "100", "loc": "europe-central2", "continent": "europe"},
+    'abm-europe-north1': {"canary": "100", "loc": "europe-north1", "continent": "europe"},
+    'abm-europe-southwest1': {"canary": "10", "loc": "europe-southwest1", "continent": "europe"},
+    'abm-europe-west1': {"canary": "50", "loc": "europe-west1", "continent": "europe"},
+    'abm-europe-west2': {"canary": "25", "loc": "europe-west1", "continent": "europe"},
+    'abm-europe-west3': {"canary": "100", "loc": "europe-west1", "continent": "europe"},
+    'abm-europe-west4': {"canary": "25", "loc": "europe-west1", "continent": "europe"},
+    'abm-europe-west6': {"canary": "10", "loc": "europe-west1", "continent": "europe"},
+    'abm-europe-west8': {"canary": "50", "loc": "europe-west1", "continent": "europe"},
+    'abm-europe-west9': {"canary": "100", "loc": "europe-west1", "continent": "europe"},
+    'abm-northamerica-northeast1': {"canary": "10", "loc": "northamerica-northeast1", "continent": "northamerica"},
+    'abm-northamerica-northeast2': {"canary": "50", "loc": "northamerica-northeast2", "continent": "northamerica"},
+    'abm-southamerica-east1': {"canary": "25", "loc": "southamerica-east1", "continent": "southamerica"},
+    'abm-southamerica-west1': {"canary": "100", "loc": "southamerica-west1", "continent": "southamerica"},
+    'abm-us-central1': {"canary": "25", "loc": "us-central1", "continent": "us"},
+    'abm-us-east1': {"canary": "50", "loc": "us-east1", "continent": "us"},
+    'abm-us-east4': {"canary": "10", "loc": "us-east4", "continent": "us"},
+    'abm-us-south1': {"canary": "10", "loc": "us-south1", "continent": "us"},
+    'abm-us-west1': {"canary": "10", "loc": "us-west1", "continent": "us"},
+    'abm-us-west2': {"canary": "50", "loc": "us-west2", "continent": "us"},
+    'abm-us-west3': {"canary": "100", "loc": "us-west3", "continent": "us"},
+    'abm-us-west4': {"canary": "50", "loc": "us-west4", "continent": "us"},
+}
 
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
-
-
+######################## 
+## GENERATE CLUSTERSELECTOR YAML 
+########################
 def create_cluster_selector_yaml(filename, selectors):
 
     labels = ""
@@ -304,4 +323,3 @@ def create_cluster_selector_yaml(filename, selectors):
     print(formatted_yaml)
                 
     return formatted_yaml
-
